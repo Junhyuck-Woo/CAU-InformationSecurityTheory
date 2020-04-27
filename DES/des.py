@@ -1,24 +1,19 @@
 import binascii
+from converter import *
 
 class DES(object):
 
+    conv = Converter()
+
     # Initializer
     def __init__(self):
-
-
-    def __plaintext_to_hex(self, plaintext):
-        hex_num = binascii.hexlify(plaintext.encode())
-        return hex_num.decode()
-
-
-    def __hex_to_bin(self, hex_num):
-        bin_num = bin(int(hex_num.encode(), 16))[2:]
-        return bin_num
+        pass
 
 
     def __initial_permutation(self, p):
         output = p[57]+p[49]+p[41]+p[33]+p[25]+p[17]+p[9]+p[1]+\
         p[59]+p[51]+p[43]+p[35]+p[27]+p[19]+p[11]+p[3]+\
+        p[61]+p[53]+p[45]+p[37]+p[29]+p[21]+p[13]+p[5]+\
         p[63]+p[55]+p[47]+p[39]+p[31]+p[23]+p[15]+p[7]+\
         p[56]+p[48]+p[40]+p[32]+p[24]+p[16]+p[8]+p[0]+\
         p[58]+p[50]+p[42]+p[34]+p[26]+p[18]+p[10]+p[2]+\
@@ -38,8 +33,20 @@ class DES(object):
         p[32]+p[0]+p[40]+p[8]+p[48]+p[16]+p[56]+p[24]
         return output
 
-    
-    def __round(self, plaintext, key):
+
+    def encrypt(self, plaintext):
+        # Check the input length, make as 64 bits
+        if len(plaintext) != 8:
+            for i in range(8-len(plaintext)):
+                plaintext = plaintext + " "
+
+        # convert to binary
+        input_string = self.conv.string_to_bin(plaintext)
+        
+        # initial permutation
+        initial_string = self.__initial_permutation(input_string)
 
 
-    def encrypt(plaintext):
+        final_string = self.__final_permutation(initial_string)
+
+        
