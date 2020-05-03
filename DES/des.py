@@ -1,9 +1,11 @@
 import binascii
 from converter import *
+from feistel import *
 
 class DES(object):
 
     conv = Converter()
+    round = Feistel()
 
     # Initializer
     def __init__(self):
@@ -34,19 +36,36 @@ class DES(object):
         return output
 
 
-    def encrypt(self, plaintext):
+    def encrypt(self, input_name):
+        # Check whether input is string or text
+        if ".txt" in input_name:
+            f = open(input_name)
+            content = f.readlines()[0].replace('\n', "")
+            f.close()
+            plaintext = content
+        else:
+            plaintext = input_name
+
         # Check the input length, make as 64 bits
-        if len(plaintext) != 8:
+        if len(plaintext) < 8:
             for i in range(8-len(plaintext)):
                 plaintext = plaintext + " "
+        elif len(plaintext) > 8:
+            print("Error: Long input")
+            exit()
 
         # convert to binary
         input_string = self.conv.string_to_bin(plaintext)
         
         # initial permutation
-        initial_string = self.__initial_permutation(input_string)
+        mid_string = self.__initial_permutation(input_string)
 
 
-        final_string = self.__final_permutation(initial_string)
+        # Round
+        for i in range(0, 16):
+            mid_string = self.round.run(mid_string)
 
-        
+        final_string = self.__final_permutation(mid_string)
+
+        # Save the cipher
+
