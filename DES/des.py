@@ -63,7 +63,7 @@ class DES(object):
 
         # Round
         for i in range(0, 16):
-            mid_string = self.round.run(mid_string)
+            mid_string = self.round.run(mid_string, key[i])
 
         final_string = self.__final_permutation(mid_string)
 
