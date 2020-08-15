@@ -37,15 +37,17 @@ class Feistel(object):
            ["02", "01", "14", "07", "04", "10", "08", "13", "15", "12", "09", "00", "03", "05", "06", "11"]]
     sb_array = [sb1, sb2, sb3, sb4, sb5, sb6, sb7, sb8]
 
+
+    cal = Calculator()
+    conv = Converter()
+
     def __init__(self):
-        cal = Calculator()
-        conv = Converter()
         pass
 
     def __mixer(self, l, r, k):
         right = r
         f_ = self.__des_function(r, k)
-        left = cal.xor(l, f_)
+        left = self.cal.xor(l, f_)
         return left, right
 
     def __swapper(self, l, r):
@@ -53,7 +55,7 @@ class Feistel(object):
         return mid_code
 
     def __expansion(self, r):
-        output = r[31] + r[0:4] + a[4] + \
+        output = r[31] + r[0:4] + r[4] + \
         r[3] + r[4:8] + r[8] + \
         r[7] + r[8:12] + r[12] + \
         r[11] + r[12:16] + r[16] + \
@@ -66,29 +68,30 @@ class Feistel(object):
     def __sbox(self, r):
         s = 0
         e = 5
-        for sb in ab_array:
+        output = ""
+        for sb in self.sb_array:
             row = r[s] + r[e]
             col = r[s+1:e]
             s += 6
             e += 6
-            row = int(conv.bin_to_dec(row))
-            col = int(conv.bin_to_dec(col))
+            row = int(self.conv.bin_to_dec(row))
+            col = int(self.conv.bin_to_dec(col))
             num = sb[row][col]
-            output += conv.hex_to_bin(num)
+            output += self.conv.hex_to_bin(num)
         return output
 
     def __straight(self, r):
         output = r[15] + r[6] + r[19] + r[20] + r[28] + r[11] + r[27] + r[16] + \
         r[0] + r[14] + r[22] + r[25] + r[4] + r[17] + r[30] + r[9] + \
-        r[1] + [7] + r[23] + r[13] + r[31] + r[26] + r[2] + r[8] + \
+        r[1] + r[7] + r[23] + r[13] + r[31] + r[26] + r[2] + r[8] + \
         r[18] + r[12] + r[29] + r[5] + r[21] + r[10] + r[3] + r[24]
         return output
 
     def __des_function(self, r, k):
-        mid = __expansion(r)
-        mid = cal.xor(mid, k)
-        mid = __sbox(mid)
-        mid = __straight(mid)
+        mid = self.__expansion(r)
+        mid = self.cal.xor(mid, k)
+        mid = self.__sbox(mid)
+        mid = self.__straight(mid)
         return mid
 
     def run(self, input_string, key):
@@ -96,5 +99,4 @@ class Feistel(object):
         right_text = input_string[31:]
         left_text, right_text = self.__mixer(left_text, right_text, key)
         mid_code = self.__swapper(left_text, right_text)
-        
         return mid_code

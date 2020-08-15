@@ -1,11 +1,13 @@
 import binascii
 from converter import *
 from feistel import *
+from keygenerator import *
 
 class DES(object):
 
     conv = Converter()
     round = Feistel()
+    k = Key()
 
     # Initializer
     def __init__(self):
@@ -54,12 +56,17 @@ class DES(object):
             print("Error: Long input")
             exit()
 
+        # Debugging
+        print("Input: " + plaintext)
+
         # convert to binary
         input_string = self.conv.string_to_bin(plaintext)
         
         # initial permutation
         mid_string = self.__initial_permutation(input_string)
 
+        #
+        key = self.k.generate()
 
         # Round
         for i in range(0, 16):
@@ -69,3 +76,32 @@ class DES(object):
 
         # Save the cipher
 
+
+        # Debugging
+        print("Output: " + final_string)
+        return final_string
+
+    def decrypt(self, cipher):
+
+        # Debugging
+        print("Input: " + cipher)
+
+        
+        # initial permutation
+        mid_string = self.__final_permutation(cipher)
+
+        #
+        key = self.k.generate()
+
+        # Round
+        for i in range(0, 16):
+            mid_string = self.round.run(mid_string, key[i])
+
+        final_string = self.__initial_permutation(mid_string)
+
+        # Save the cipher
+
+
+        # Debugging
+        print("Output: " + final_string)
+        return final_string

@@ -11,7 +11,7 @@ class Key(object):
     def __init__(self):
         pass
 
-    def generate(self, input_name):
+    def generate(self, input_name="key.txt"):
         # Check whether input is string or text
         if ".txt" in input_name:
             f = open(input_name)
@@ -22,14 +22,19 @@ class Key(object):
             key = input_name
 
         # Debugging
-        print("Key: " + plaintext)
+        print("Key: " + key)
 
-        for i in shift_bits:
-            left = self.shift(key[:28], i)
-            right = self.shift(key[28:], i)
-            key = compression(left, right)
-            key_list.append(key)
-        return key_list
+        left = key[:28]
+        right = key[28:]
+
+        for i in self.shift_bits:
+            left = self.shift(left, i)
+            right = self.shift(right, i)
+            key = self.compression(left, right)
+            self.key_list.append(key)
+        # Debugging
+        print("======end=====")
+        return self.key_list
         
     def compression(self, l, r):
         sk = l + r

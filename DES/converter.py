@@ -30,6 +30,7 @@ class Converter(object):
     
     def bin_to_dec(self, bin_num):
         mul = 1
+        dec_num = 0
         r_bin_num = bin_num[::-1]
         for i in r_bin_num:
             dec_num += mul*int(i)
